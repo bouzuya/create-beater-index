@@ -6,13 +6,19 @@ import Prelude
 
 import Bouzuya.TemplateString as TemplateString
 import Data.Array as Array
+import Data.Either as Either
+import Data.String as String
+import Data.String.Regex as Regex
+import Data.String.Regex.Flags as RegexFlags
 import Data.Tuple (Tuple(..))
 import Effect (Effect)
 import Effect.Console as Console
 import Foreign.Object (Object)
 import Foreign.Object as Object
 import Node.FS.Sync as FS
+import Node.Path as Path
 import Node.Process as Process
+import Partial.Unsafe as Unsafe
 
 indexContent :: Array String -> String
 indexContent files = TemplateString.template template variables
@@ -25,9 +31,24 @@ indexContent files = TemplateString.template template variables
       TemplateString.template
         t
         (Object.fromFoldable
-          [ Tuple "file" f
-          , Tuple "name" f -- FIXME
+          [ Tuple "file" (Path.basenameWithoutExt f (Path.extname f))
+          , Tuple
+              "name"
+              (camelCase
+                (Regex.split
+                  (Unsafe.unsafePartial
+                    (Either.fromRight
+                      (Regex.regex "[^a-z]" RegexFlags.noFlags)))
+                  (Path.basenameWithoutExt f (Path.extname f))))
           ])
+
+    camelCase :: Array String -> String
+    camelCase ss =
+      Array.fold
+        ( (Array.take 1 ss) <>
+          (map
+            (\s -> (String.toUpper (String.take 1 s)) <> (String.drop 1 s))
+            (Array.drop 1 ss)))
 
     importTests :: String
     importTests =
