@@ -12,9 +12,9 @@ import Data.String.Regex as Regex
 import Data.String.Regex.Flags as RegexFlags
 import Data.Tuple (Tuple(..))
 import Effect (Effect)
-import Effect.Console as Console
 import Foreign.Object (Object)
 import Foreign.Object as Object
+import Node.Encoding as Encoding
 import Node.FS.Sync as FS
 import Node.Path as Path
 import Node.Process as Process
@@ -79,9 +79,6 @@ indexContent files = TemplateString.template template variables
 
 main :: Effect Unit
 main = do
-  args <- map (Array.drop 2) Process.argv
-  Console.logShow args
   cwd <- Process.cwd
   files <- FS.readdir cwd
-  Console.logShow files
-  Console.log (indexContent files)
+  FS.writeTextFile Encoding.UTF8 "index.ts" (indexContent files)
