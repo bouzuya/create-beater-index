@@ -5,7 +5,8 @@ You can edit this file as you like.
 { name =
     "my-project"
 , dependencies =
-    [ "bouzuya-template-string"
+    [ "bouzuya-command-line-option-parser"
+    , "bouzuya-template-string"
     , "console"
     , "effect"
     , "node-fs"
