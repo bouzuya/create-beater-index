@@ -24,8 +24,8 @@ import Node.FS.Sync as FS
 import Node.Path as Path
 import Node.Process as Process
 
-indexContent :: Array String -> String
-indexContent files = TemplateString.template template variables
+indexContent :: Boolean -> Array String -> String
+indexContent toRun files = TemplateString.template (template toRun) variables
   where
     concatTests :: String
     concatTests = lines "  .concat({{name}}Tests)" files
@@ -53,17 +53,21 @@ indexContent files = TemplateString.template template variables
         "$" -> "dollar"
         baseName -> Case.camelCase baseName
 
-    template :: String
-    template =
+    template :: Boolean -> String
+    template toRun' =
       Array.intercalate
         "\n"
-        [ "import { Test } from 'beater';"
+        [ if toRun'
+            then "import { Test, run } from 'beater';"
+            else "import { Test } from 'beater';"
         , "{{importTests}}"
         , ""
         , "const tests = ([] as Test[])"
         , "{{concatTests}};"
         , ""
-        , "export { tests };"
+        , if toRun'
+            then "run(tests).catch(() => process.exit(1));"
+            else "export { tests };"
         ]
 
     variables :: Object String
@@ -73,8 +77,12 @@ indexContent files = TemplateString.template template variables
         , Tuple "concatTests" concatTests
         ]
 
-createIndex :: Boolean -> String -> Effect Unit
-createIndex recursive dir = do
+createIndex ::
+  { recursive :: Boolean, runInRoot :: Boolean }
+  -> String
+  -> String
+  -> Effect Unit
+createIndex options root dir = do
   Console.log dir
   indexPath <- pure (Path.concat (Array.snoc [dir] "index.ts"))
   files <- FS.readdir dir
@@ -83,8 +91,11 @@ createIndex recursive dir = do
       (Array.filter
         (notEq indexPath)
         (map (Path.concat <<< (Array.snoc [dir])) files))
-  FS.writeTextFile Encoding.UTF8 indexPath (indexContent paths)
-  if recursive
+  FS.writeTextFile
+    Encoding.UTF8
+    indexPath
+    (indexContent ((root == dir) && options.runInRoot) paths)
+  if options.recursive
     then do
       stats <- Traversable.traverse FS.stat paths
       Traversable.for_
@@ -93,7 +104,7 @@ createIndex recursive dir = do
           (Array.filter
             (Stats.isDirectory <<< Tuple.snd)
             (Array.zip paths stats)))
-        (createIndex recursive)
+        (createIndex options root)
     else pure unit
 
 main :: Effect Unit
@@ -106,7 +117,9 @@ main = do
       (CommandLineOption.parse
         { recursive:
             CommandLineOption.booleanOption "recursive" Nothing "recursive"
+        , runInRoot:
+            CommandLineOption.booleanOption "run" Nothing "call run (root only)"
         }
         args)
   cwd <- Process.cwd
-  createIndex options.recursive cwd
+  createIndex options cwd cwd
