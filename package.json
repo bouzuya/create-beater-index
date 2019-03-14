@@ -20,7 +20,11 @@
     "bin"
   ],
   "homepage": "https://github.com/bouzuya/create-beater-index#readme",
-  "keywords": [],
+  "keywords": [
+    "beater",
+    "bouzuya",
+    "test"
+  ],
   "license": "MIT",
   "main": "index.js",
   "repository": {
