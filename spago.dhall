@@ -6,6 +6,7 @@ You can edit this file as you like.
     "my-project"
 , dependencies =
     [ "bouzuya-command-line-option-parser"
+    , "bouzuya-string-case"
     , "bouzuya-template-string"
     , "console"
     , "effect"
