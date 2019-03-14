@@ -5,13 +5,11 @@ module Main
 import Prelude
 
 import Bouzuya.CommandLineOption as CommandLineOption
+import Bouzuya.String.Case as Case
 import Bouzuya.TemplateString as TemplateString
 import Data.Array as Array
 import Data.Either as Either
 import Data.Maybe (Maybe(..))
-import Data.String as String
-import Data.String.Regex as Regex
-import Data.String.Regex.Flags as RegexFlags
 import Data.Traversable as Traversable
 import Data.Tuple (Tuple(..))
 import Data.Tuple as Tuple
@@ -25,7 +23,6 @@ import Node.FS.Stats as Stats
 import Node.FS.Sync as FS
 import Node.Path as Path
 import Node.Process as Process
-import Partial.Unsafe as Unsafe
 
 indexContent :: Array String -> String
 indexContent files = TemplateString.template template variables
@@ -42,14 +39,6 @@ indexContent files = TemplateString.template template variables
           , Tuple "name" (pathToName f)
           ])
 
-    camelCase :: Array String -> String
-    camelCase ss =
-      Array.fold
-        ( (Array.take 1 ss) <>
-          (map
-            (\s -> (String.toUpper (String.take 1 s)) <> (String.drop 1 s))
-            (Array.drop 1 ss)))
-
     importTests :: String
     importTests =
       lines "import { tests as {{name}}Tests } from './{{file}}';" files
@@ -62,13 +51,7 @@ indexContent files = TemplateString.template template variables
       case Path.basenameWithoutExt f (Path.extname f) of
         "_" -> "underscore"
         "$" -> "dollar"
-        baseName ->
-          camelCase
-            (Regex.split
-              (Unsafe.unsafePartial
-                (Either.fromRight
-                  (Regex.regex "[^a-z]" RegexFlags.noFlags)))
-              baseName)
+        baseName -> Case.camelCase baseName
 
     template :: String
     template =
