@@ -2,6 +2,17 @@
 
 beater index generator
 
+## Usage
+
+```bash
+cd test/
+npx beater-index
+```
+
+```bash
+npx beater-index --help
+```
+
 ## How to build
 
 ```bash
