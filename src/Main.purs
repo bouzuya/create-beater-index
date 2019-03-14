@@ -78,7 +78,8 @@ indexContent toRun files = TemplateString.template (template toRun) variables
         ]
 
 createIndex ::
-  { recursive :: Boolean, runInRoot :: Boolean }
+  forall r.
+  { recursive :: Boolean, runInRoot :: Boolean | r }
   -> String
   -> String
   -> Effect Unit
@@ -107,6 +108,18 @@ createIndex options root dir = do
         (createIndex options root)
     else pure unit
 
+help :: String
+help =
+  Array.intercalate
+    "\n"
+    [ "Usage: create-beater-index [options]"
+    , ""
+    , "Options:"
+    , "  -h, --help  display help"
+    , "  --recursive recursive"
+    , "  --run       call run (root only)"
+    ]
+
 main :: Effect Unit
 main = do
   args <- map (Array.drop 2) Process.argv
@@ -115,11 +128,16 @@ main = do
       (const (Exception.throw "invalid options"))
       pure
       (CommandLineOption.parse
-        { recursive:
+        { help:
+            CommandLineOption.booleanOption "help" (Just 'h') "display help"
+        , recursive:
             CommandLineOption.booleanOption "recursive" Nothing "recursive"
         , runInRoot:
             CommandLineOption.booleanOption "run" Nothing "call run (root only)"
         }
         args)
-  cwd <- Process.cwd
-  createIndex options cwd cwd
+  if options.help
+    then Console.log help
+    else do
+      cwd <- Process.cwd
+      createIndex options cwd cwd
