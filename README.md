@@ -1,4 +1,4 @@
-# @bouzuya/create-beater-index
+# create-beater-index
 
 beater index generator
 
