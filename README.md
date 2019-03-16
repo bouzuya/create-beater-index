@@ -1,6 +1,6 @@
 # create-beater-index
 
-beater index generator
+[beater][bouzuya/beater] index generator
 
 ## Usage
 
@@ -30,3 +30,5 @@ npm install
 [user]: https://github.com/bouzuya
 [email]: mailto:m@bouzuya.net
 [url]: https://bouzuya.net/
+
+[bouzuya/beater]: https://github.com/bouzuya/beater
