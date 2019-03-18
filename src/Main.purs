@@ -68,6 +68,7 @@ indexContent toRun files = TemplateString.template (template toRun) variables
         , if toRun'
             then "run(tests).catch(() => process.exit(1));"
             else "export { tests };"
+        , ""
         ]
 
     variables :: Object String
