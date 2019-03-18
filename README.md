@@ -6,11 +6,13 @@
 
 ```bash
 cd test/
-npx beater-index
+npx create-beater-index
+# or npm init beater-index
 ```
 
 ```bash
-npx beater-index --help
+npx create-beater-index --help
+# or npm init beater-index --help
 ```
 
 ## How to build
