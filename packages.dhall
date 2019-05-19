@@ -109,16 +109,16 @@ let additions =
 -}
 
 let mkPackage =
-      https://raw.githubusercontent.com/purescript/package-sets/psc-0.12.3-20190227/src/mkPackage.dhall sha256:0b197efa1d397ace6eb46b243ff2d73a3da5638d8d0ac8473e8e4a8fc528cf57
+      https://raw.githubusercontent.com/purescript/package-sets/psc-0.12.5-20190519/src/mkPackage.dhall sha256:0b197efa1d397ace6eb46b243ff2d73a3da5638d8d0ac8473e8e4a8fc528cf57
 
 let upstream =
-      https://raw.githubusercontent.com/purescript/package-sets/psc-0.12.3-20190227/src/packages.dhall sha256:eb8ae389eb218f1aad4c20054b8cce6c04a861a567aff72abd9111609178e986
+      https://raw.githubusercontent.com/purescript/package-sets/psc-0.12.5-20190519/src/packages.dhall sha256:a34c8cdec3e6ba4cd0b0fb9f213bfabe74a093583586a22c66719f020e90bbf5
 
 let bouzuya =
-      https://raw.githubusercontent.com/bouzuya/purescript-bouzuya-packages/20190314/bouzuya.dhall sha256:9bb250fb273ae285731b531399614b22d19a546c49afad75e1c5c96eb31b3753
+      https://raw.githubusercontent.com/bouzuya/purescript-bouzuya-packages/20190505/bouzuya.dhall sha256:3dcf7f51156bb3fe6823207723ddc0bea919d8ffee3c99fd77f270f944411990
 
 let overrides = {=}
 
 let additions = {=} // bouzuya
 
-in  upstream ⫽ overrides ⫽ additions
+in  upstream // overrides // additions
