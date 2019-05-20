@@ -15,6 +15,37 @@ npx create-beater-index --help
 # or npm init beater-index --help
 ```
 
+## Example
+
+```bash
+$ cd test/
+$ ls
+foo.ts
+$ cat foo.ts
+import assert from 'assert';
+import { test } from 'beater';
+
+const tests = [
+  test('example', () => {
+    assert(1 === 1);
+  })
+];
+
+export { tests };
+
+$ npx create-beater-index
+$ ls
+foo.ts   index.ts
+$ cat index.ts
+import { Test } from 'beater';
+import { tests as fooTests } from './foo';
+
+const tests = ([] as Test[])
+  .concat(fooTests);
+
+export { tests };
+```
+
 ## How to build
 
 ```bash
